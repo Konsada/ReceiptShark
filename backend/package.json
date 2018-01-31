@@ -1,0 +1,19 @@
+{
+  "name": "receiptshark",
+  "version": "1.0.0",
+  "description": "This is the backend.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"hello world\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Konsada/ReceiptShark.git"
+  },
+  "author": "konsada",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Konsada/ReceiptShark/issues"
+  },
+  "homepage": "https://github.com/Konsada/ReceiptShark#readme"
+}
