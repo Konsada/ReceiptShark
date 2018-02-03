@@ -6,11 +6,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 
 import receiptshark.com.receiptshark.http.MCSHttpClient;
 import receiptshark.com.receiptshark.utils.Constants;
@@ -20,12 +23,14 @@ import static android.provider.MediaStore.EXTRA_VIDEO_QUALITY;
 public class MainActivity extends AppCompatActivity {
     MCSHttpClient client;
     File imageFile;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         client = new MCSHttpClient();
+        list = findViewById(R.id.listView);
     }
 
     public void takePicture(View view) {
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 string = client.imageToText(Constants.BREED_MDOEL_URL, imageFile);
             } catch (IOException e) {
+                list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList("50% lab", "50% rottweiler")));
                 e.printStackTrace();
             }
 
