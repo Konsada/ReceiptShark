@@ -9,18 +9,23 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+
+import receiptshark.com.receiptshark.http.MCSHttpClient;
+import receiptshark.com.receiptshark.utils.Constants;
 
 import static android.provider.MediaStore.EXTRA_VIDEO_QUALITY;
 
 public class MainActivity extends AppCompatActivity {
-
+    MCSHttpClient client;
     File imageFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        client = new MCSHttpClient();
     }
 
     public void takePicture(View view) {
@@ -36,10 +41,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // got picture and was OK
         if (requestCode == 0 && resultCode == RESULT_OK) {
-            Toast.makeText(this, "got the pic", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Picture taken!", Toast.LENGTH_LONG).show();
+
+            String string;
+            // Send to the classifier
+            try {
+                string = client.imageToText(Constants.BREED_MDOEL_URL, imageFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 }
