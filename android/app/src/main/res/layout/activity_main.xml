@@ -8,25 +8,28 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="28dp"
-        android:layout_marginEnd="28dp"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="180dp"
         android:clickable="true"
+        android:onClick="takePicture"
         android:tint="@android:color/background_light"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:onClick="takePicture"/>
+        app:rippleColor="@color/Transparent"
+        app:srcCompat="@android:drawable/ic_menu_help" />
 
     <ListView
-        android:id="@+id/listView2"
-        android:layout_width="wrap_content"
-        android:layout_height="519dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/listView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp" />
 
 </android.support.constraint.ConstraintLayout>
