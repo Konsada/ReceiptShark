@@ -1,6 +1,7 @@
 package receiptshark.com.receiptshark;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -10,10 +11,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import receiptshark.com.receiptshark.http.MCSHttpClient;
 import receiptshark.com.receiptshark.utils.Constants;
@@ -35,31 +41,62 @@ public class MainActivity extends AppCompatActivity {
 
     public void takePicture(View view) {
         imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "test.jpg");
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //new Intent(this, CameraActivity.class);
-        //startActivity(intent);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, URI.create(imageFile.getAbsolutePath()));
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(EXTRA_VIDEO_QUALITY, 1);
 
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 9999);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // got picture and was OK
-        if (requestCode == 0 && resultCode == RESULT_OK) {
+        if (requestCode == 9999 && resultCode == RESULT_OK && data != null) {
             Toast.makeText(this, "Picture taken!", Toast.LENGTH_LONG).show();
 
             String string;
-            // Send to the classifier
-            try {
-                string = client.imageToText(Constants.BREED_MDOEL_URL, imageFile);
-            } catch (IOException e) {
-                list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList("50% lab", "50% rottweiler")));
-                e.printStackTrace();
-            }
+            Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+            ByteBuffer byteBuffer = ByteBuffer.allocate(bitmap.getRowBytes() * bitmap.getHeight());
+            bitmap.copyPixelsToBuffer(byteBuffer);
+            byte[] body = byteBuffer.array();
 
+            Map<String, String> headers = new HashMap<>();
+
+            //headers.put("Ocp-Apim-Subscription-Key", API_KEY);
+            headers.put("Content-Type", "application/octet-stream");
+            headers.put("Prediction-Key", "21f1a2ddfa214fe2bb69ae6068c1e3b7");
+            //headers.put( "Content-Length", Integer.toString( body.length ));
+
+            string = client.imageToText(Constants.MIX_BREED_URL, headers, body);
+            list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Arrays.asList(string)));
 
         }
+    }
+
+    public byte[] read(File file) throws IOException {
+        ByteArrayOutputStream ous = null;
+        InputStream ios = null;
+        try {
+            byte[] buffer = new byte[4096];
+            ous = new ByteArrayOutputStream();
+            ios = new FileInputStream(file);
+            int read = 0;
+            while ((read = ios.read(buffer)) != -1) {
+                ous.write(buffer, 0, read);
+            }
+        } finally {
+            try {
+                if (ous != null)
+                    ous.close();
+            } catch (IOException e) {
+            }
+
+            try {
+                if (ios != null)
+                    ios.close();
+            } catch (IOException e) {
+            }
+        }
+        return ous.toByteArray();
     }
 }
